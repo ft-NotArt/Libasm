@@ -74,42 +74,42 @@ bool test_strcmp() {
 	bzero(str1, 100) ;	strcpy(str1, "") ;
 	bzero(str2, 100) ;	strcpy(str2, "") ;
 	if (strcmp(str1, str2) != ft_strcmp(str1, str2)) {
-		printf("\t strcpy: error on empty strings \n") ;
+		printf("\t strcmp: error on empty strings \n") ;
 		res = false ;
 	}
 
 	bzero(str1, 100) ;	strcpy(str1, "") ;
 	bzero(str2, 100) ;	strcpy(str2, "++") ;
 	if (strcmp(str1, str2) != ft_strcmp(str1, str2)) {
-		printf("\t strcpy: error on empty string (first one) \n") ;
+		printf("\t strcmp: error on empty string (first one) \n") ;
 		res = false ;
 	}
 
 	bzero(str1, 100) ;	strcpy(str1, "++") ;
 	bzero(str2, 100) ;	strcpy(str2, "") ;
 	if (strcmp(str1, str2) != ft_strcmp(str1, str2)) {
-		printf("\t strcpy: error on empty string (second one) \n") ;
+		printf("\t strcmp: error on empty string (second one) \n") ;
 		res = false ;
 	}
 
 	bzero(str1, 100) ;	strcpy(str1, "++") ;
 	bzero(str2, 100) ;	strcpy(str2, "++") ;
 	if (strcmp(str1, str2) != ft_strcmp(str1, str2)) {
-		printf("\t strcpy: error on same strings \n") ;
+		printf("\t strcmp: error on same strings \n") ;
 		res = false ;
 	}
 
 	bzero(str1, 100) ;	strcpy(str1, "++++") ;
 	bzero(str2, 100) ;	strcpy(str2, "++") ;
 	if (strcmp(str1, str2) != ft_strcmp(str1, str2)) {
-		printf("\t strcpy: error on similar strings (not same length) \n") ;
+		printf("\t strcmp: error on similar strings (not same length) \n") ;
 		res = false ;
 	}
 
 	bzero(str1, 100) ;	strcpy(str1, "++") ;
 	bzero(str2, 100) ;	strcpy(str2, "--") ;
 	if (strcmp(str1, str2) != ft_strcmp(str1, str2)) {
-		printf("\t strcpy: error on different strings \n") ;
+		printf("\t strcmp: error on different strings \n") ;
 		res = false ;
 	}
 
@@ -141,7 +141,7 @@ bool test_write() {
 	read(read_fd, ft_read_str, 100) ;
 	
 	if (strcmp(real_read_str, ft_read_str) || real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
-		printf("\t strcpy: error on empty string \n") ;
+		printf("\t write: error on empty string \n") ;
 		res = false ;
 	}
 	close(write_fd) ; close(read_fd) ;
@@ -162,7 +162,7 @@ bool test_write() {
 	read(read_fd, ft_read_str, 100) ;
 
 	if (strcmp(real_read_str, ft_read_str) || real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
-		printf("\t strcpy: error on classic string \n") ;
+		printf("\t write: error on classic string \n") ;
 		res = false ;
 	}
 	close(write_fd) ; close(read_fd) ;
@@ -183,7 +183,7 @@ bool test_write() {
 	read(read_fd, ft_read_str, 100) ;
 	
 	if (strcmp(real_read_str, ft_read_str) || real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
-		printf("\t strcpy: error on classic string \n") ;
+		printf("\t write: error on classic string \n") ;
 		res = false ;
 	}
 	close(write_fd) ; close(read_fd) ;
@@ -198,7 +198,7 @@ bool test_write() {
 	ft_errnoVal = errno ;
 	
 	if (real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
-		printf("\t strcpy: error on classic string \n") ;
+		printf("\t write: error on classic string \n") ;
 		res = false ;
 	}
 
@@ -214,7 +214,7 @@ bool test_write() {
 	ft_errnoVal = errno ;
 	
 	if (real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
-		printf("\t strcpy: error on classic string \n") ;
+		printf("\t write: error on classic string \n") ;
 		res = false ;
 	}
 	close(read_fd) ;
@@ -246,7 +246,7 @@ bool test_read() {
 	ft_errnoVal = errno ;
 	
 	if (strcmp(real_read_str, ft_read_str) || real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
-		printf("\t strcpy: error on empty string \n") ;
+		printf("\t read: error on empty string \n") ;
 		res = false ;
 	}
 	close(write_fd) ; close(read_fd) ;
@@ -265,7 +265,7 @@ bool test_read() {
 	ft_errnoVal = errno ;
 
 	if (strcmp(real_read_str, ft_read_str) || real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
-		printf("\t strcpy: error on classic string \n") ;
+		printf("\t read: error on classic string \n") ;
 		res = false ;
 	}
 	close(write_fd) ; close(read_fd) ;
@@ -284,7 +284,7 @@ bool test_read() {
 	ft_errnoVal = errno ;
 	
 	if (strcmp(real_read_str, ft_read_str) || real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
-		printf("\t strcpy: error on classic string \n") ;
+		printf("\t read: error on classic string \n") ;
 		res = false ;
 	}
 	close(write_fd) ; close(read_fd) ;
@@ -302,7 +302,7 @@ bool test_read() {
 	ft_errnoVal = errno ;
 	
 	if (real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
-		printf("\t strcpy: error on classic string \n") ;
+		printf("\t read: error on classic string \n") ;
 		res = false ;
 	}
 
@@ -319,7 +319,7 @@ bool test_read() {
 	ft_errnoVal = errno ;
 	
 	if (real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
-		printf("\t strcpy: error on classic string \n") ;
+		printf("\t read: error on classic string \n") ;
 		res = false ;
 	}
 
