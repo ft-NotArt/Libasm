@@ -6,6 +6,7 @@
 
 size_t ft_strlen(char *str) ;
 char *ft_strcpy(char *dest, const char *src);
+int ft_strcmp(const char *s1, const char *s2);
 
 bool test_strlen() {
 	char str[100] ;
@@ -58,6 +59,56 @@ bool test_strcpy() {
 	return res ;
 }
 
+bool test_strcmp() {
+	char str1[100] ;
+	char str2[100] ;
+	bool res = true ;
+
+	bzero(str1, 100) ;	strcpy(str1, "") ;
+	bzero(str2, 100) ;	strcpy(str2, "") ;
+	if (strcmp(str1, str2) != ft_strcmp(str1, str2)) {
+		printf("\t strcpy: error on empty strings \n") ;
+		res = false ;
+	}
+
+	bzero(str1, 100) ;	strcpy(str1, "") ;
+	bzero(str2, 100) ;	strcpy(str2, "++") ;
+	if (strcmp(str1, str2) != ft_strcmp(str1, str2)) {
+		printf("\t strcpy: error on empty string (first one) \n") ;
+		res = false ;
+	}
+
+	bzero(str1, 100) ;	strcpy(str1, "++") ;
+	bzero(str2, 100) ;	strcpy(str2, "") ;
+	if (strcmp(str1, str2) != ft_strcmp(str1, str2)) {
+		printf("\t strcpy: error on empty string (second one) \n") ;
+		res = false ;
+	}
+
+	bzero(str1, 100) ;	strcpy(str1, "++") ;
+	bzero(str2, 100) ;	strcpy(str2, "++") ;
+	if (strcmp(str1, str2) != ft_strcmp(str1, str2)) {
+		printf("\t strcpy: error on same strings \n") ;
+		res = false ;
+	}
+
+	bzero(str1, 100) ;	strcpy(str1, "++++") ;
+	bzero(str2, 100) ;	strcpy(str2, "++") ;
+	if (strcmp(str1, str2) != ft_strcmp(str1, str2)) {
+		printf("\t strcpy: error on similar strings (not same length) \n") ;
+		res = false ;
+	}
+
+	bzero(str1, 100) ;	strcpy(str1, "++") ;
+	bzero(str2, 100) ;	strcpy(str2, "--") ;
+	if (strcmp(str1, str2) != ft_strcmp(str1, str2)) {
+		printf("\t strcpy: error on different strings \n") ;
+		res = false ;
+	}
+
+	return res ;
+}
+
 int main(int argc, char *argv[]) {
 	printf("/===========================\\\n");
 	printf("|   LET'S BEGIN THE TESTS   |\n");
@@ -68,5 +119,8 @@ int main(int argc, char *argv[]) {
 	printf("\n\n") ;
 
 	printf("strcpy : %s \n", test_strcpy() ? "👑" : "🖕") ;
+	printf("\n\n") ;
+
+	printf("strcmp : %s \n", test_strcmp() ? "👑" : "🖕") ;
 	printf("\n\n") ;
 }
