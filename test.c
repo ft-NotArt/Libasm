@@ -122,8 +122,7 @@ bool test_write() {
 	char ft_read_str[100] ;
 	bool res = true ;
 
-	int write_fd ;
-	int read_fd ;
+	int write_fd, read_fd ;
 	int real_retVal, ft_retVal, real_errnoVal, ft_errnoVal ;
 
 
@@ -145,6 +144,7 @@ bool test_write() {
 		printf("\t strcpy: error on empty string \n") ;
 		res = false ;
 	}
+	close(write_fd) ; close(read_fd) ;
 
 
 	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "bonjour!") ;
@@ -165,6 +165,7 @@ bool test_write() {
 		printf("\t strcpy: error on classic string \n") ;
 		res = false ;
 	}
+	close(write_fd) ; close(read_fd) ;
 
 
 	write_fd = open("test.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777) ;
@@ -185,17 +186,14 @@ bool test_write() {
 		printf("\t strcpy: error on classic string \n") ;
 		res = false ;
 	}
+	close(write_fd) ; close(read_fd) ;
 
 
-	write_fd = open("test.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777) ;
-	read_fd = open("test.txt", O_RDONLY | O_CREAT, 0777) ;
 	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "wrong fd !") ;
 
 	real_retVal = write(-2, write_str, strlen(write_str)) ;
 	real_errnoVal = errno ;
 
-	close(write_fd) ; write_fd = open("test.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777) ;
-	close(read_fd) ; read_fd = open("test.txt", O_RDONLY | O_CREAT, 0777) ;
 	ft_retVal = ft_write(-2, write_str, strlen(write_str)) ;
 	ft_errnoVal = errno ;
 	
@@ -205,14 +203,12 @@ bool test_write() {
 	}
 
 
-	write_fd = open("test.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777) ;
 	read_fd = open("test.txt", O_RDONLY | O_CREAT, 0777) ;
 	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "wrong fd again !") ;
 
 	real_retVal = write(read_fd, write_str, strlen(write_str)) ;
 	real_errnoVal = errno ;
 
-	close(write_fd) ; write_fd = open("test.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777) ;
 	close(read_fd) ; read_fd = open("test.txt", O_RDONLY | O_CREAT, 0777) ;
 	ft_retVal = ft_write(read_fd, write_str, strlen(write_str)) ;
 	ft_errnoVal = errno ;
@@ -221,9 +217,8 @@ bool test_write() {
 		printf("\t strcpy: error on classic string \n") ;
 		res = false ;
 	}
-
-	close(write_fd) ;
 	close(read_fd) ;
+
 
 	return res ;
 }
@@ -234,8 +229,7 @@ bool test_read() {
 	char ft_read_str[100] ;
 	bool res = true ;
 
-	int write_fd ;
-	int read_fd ;
+	int write_fd, read_fd ;
 	int real_retVal, ft_retVal, real_errnoVal, ft_errnoVal ;
 
 
@@ -311,7 +305,6 @@ bool test_read() {
 		printf("\t strcpy: error on classic string \n") ;
 		res = false ;
 	}
-	close(write_fd) ; close(read_fd) ;
 
 
 	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "wrong fd again !") ;
@@ -329,7 +322,6 @@ bool test_read() {
 		printf("\t strcpy: error on classic string \n") ;
 		res = false ;
 	}
-	close(write_fd) ; close(read_fd) ;
 
 
 	return res ;
