@@ -13,6 +13,7 @@ size_t ft_strlen(char *str) ;
 char *ft_strcpy(char *dest, const char *src);
 int ft_strcmp(const char *s1, const char *s2);
 ssize_t ft_write(int fd, const void *buf, size_t count);
+ssize_t ft_read(int fd, void *buf, size_t count);
 
 bool test_strlen() {
 	char str[100] ;
@@ -227,6 +228,113 @@ bool test_write() {
 	return res ;
 }
 
+bool test_read() {
+	char write_str[100] ;
+	char real_read_str[100] ;
+	char ft_read_str[100] ;
+	bool res = true ;
+
+	int write_fd ;
+	int read_fd ;
+	int real_retVal, ft_retVal, real_errnoVal, ft_errnoVal ;
+
+
+	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "") ;
+
+	write_fd = open("test.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777) ;
+	read_fd = open("test.txt", O_RDONLY | O_CREAT, 0777) ;
+	write(write_fd, write_str, strlen(write_str)) ;
+	
+	real_retVal = read(read_fd, real_read_str, 100) ;
+	real_errnoVal = errno ;
+	close(read_fd) ; read_fd = open("test.txt", O_RDONLY | O_CREAT, 0777) ;
+	ft_retVal = ft_read(read_fd, ft_read_str, 100) ;
+	ft_errnoVal = errno ;
+	
+	if (strcmp(real_read_str, ft_read_str) || real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
+		printf("\t strcpy: error on empty string \n") ;
+		res = false ;
+	}
+	close(write_fd) ; close(read_fd) ;
+
+
+	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "bonjour!") ;
+
+	write_fd = open("test.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777) ;
+	read_fd = open("test.txt", O_RDONLY | O_CREAT, 0777) ;
+	write(write_fd, write_str, strlen(write_str)) ;
+	
+	real_retVal = read(read_fd, real_read_str, 100) ;
+	real_errnoVal = errno ;
+	close(read_fd) ; read_fd = open("test.txt", O_RDONLY | O_CREAT, 0777) ;
+	ft_retVal = read(read_fd, ft_read_str, 100) ;
+	ft_errnoVal = errno ;
+
+	if (strcmp(real_read_str, ft_read_str) || real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
+		printf("\t strcpy: error on classic string \n") ;
+		res = false ;
+	}
+	close(write_fd) ; close(read_fd) ;
+
+
+	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "wrong size !") ;
+
+	write_fd = open("test.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777) ;
+	read_fd = open("test.txt", O_RDONLY | O_CREAT, 0777) ;
+	write(write_fd, write_str, strlen(write_str)) ;
+	
+	real_retVal = read(read_fd, real_read_str, strlen(write_str) - 5) ;
+	real_errnoVal = errno ;
+	close(read_fd) ; read_fd = open("test.txt", O_RDONLY | O_CREAT, 0777) ;
+	ft_retVal = read(read_fd, ft_read_str, strlen(write_str) - 5) ;
+	ft_errnoVal = errno ;
+	
+	if (strcmp(real_read_str, ft_read_str) || real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
+		printf("\t strcpy: error on classic string \n") ;
+		res = false ;
+	}
+	close(write_fd) ; close(read_fd) ;
+
+
+	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "wrong fd !") ;
+
+	write_fd = open("test.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777) ;
+	write(write_fd, write_str, strlen(write_str)) ;
+	close(write_fd) ;
+
+	real_retVal = read(-2, real_read_str, strlen(write_str)) ;
+	real_errnoVal = errno ;
+	ft_retVal = ft_read(-2, ft_read_str, strlen(write_str)) ;
+	ft_errnoVal = errno ;
+	
+	if (real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
+		printf("\t strcpy: error on classic string \n") ;
+		res = false ;
+	}
+	close(write_fd) ; close(read_fd) ;
+
+
+	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "wrong fd again !") ;
+
+	write_fd = open("test.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777) ;
+	write(write_fd, write_str, strlen(write_str)) ;
+	close(write_fd) ;
+
+	real_retVal = read(write_fd, real_read_str, strlen(write_str)) ;
+	real_errnoVal = errno ;
+	ft_retVal = ft_read(write_fd, ft_read_str, strlen(write_str)) ;
+	ft_errnoVal = errno ;
+	
+	if (real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
+		printf("\t strcpy: error on classic string \n") ;
+		res = false ;
+	}
+	close(write_fd) ; close(read_fd) ;
+
+
+	return res ;
+}
+
 int main(int argc, char *argv[]) {
 	printf("/===========================\\\n");
 	printf("|   LET'S BEGIN THE TESTS   |\n");
@@ -243,5 +351,8 @@ int main(int argc, char *argv[]) {
 	printf("\n\n") ;
 
 	printf("write : %s \n", test_write() ? "👑" : "🖕") ;
+	printf("\n\n") ;
+
+	printf("read : %s \n", test_read() ? "👑" : "🖕") ;
 	printf("\n\n") ;
 }
