@@ -3,10 +3,16 @@
 
 #include <string.h>
 #include <strings.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
 
 size_t ft_strlen(char *str) ;
 char *ft_strcpy(char *dest, const char *src);
 int ft_strcmp(const char *s1, const char *s2);
+ssize_t ft_write(int fd, const void *buf, size_t count);
 
 bool test_strlen() {
 	char str[100] ;
@@ -109,6 +115,95 @@ bool test_strcmp() {
 	return res ;
 }
 
+bool test_write() {
+	char write_str[100] ;
+	char real_read_str[100] ;
+	char ft_read_str[100] ;
+	bool res = true ;
+
+	int write_fd = open("test.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777) ;
+	int read_fd = open("test.txt", O_RDONLY | O_CREAT, 0777) ;
+	int real_retVal, ft_retVal, real_errnoVal, ft_errnoVal ;
+
+
+	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "") ;
+
+	real_retVal = write(write_fd, write_str, strlen(write_str)) ;
+	real_errnoVal = errno ;
+	read(read_fd, real_read_str, 100) ;
+	
+	ft_retVal = ft_write(write_fd, write_str, strlen(write_str)) ;
+	ft_errnoVal = errno ;
+	read(read_fd, ft_read_str, 100) ;
+	
+	if (strcmp(real_read_str, ft_read_str) || real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
+		printf("\t strcpy: error on empty string \n") ;
+		res = false ;
+	}
+
+
+	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "bonjour!") ;
+
+	real_retVal = write(write_fd, write_str, strlen(write_str)) ;
+	real_errnoVal = errno ;
+	read(read_fd, real_read_str, 100) ;
+	
+	ft_retVal = ft_write(write_fd, write_str, strlen(write_str)) ;
+	ft_errnoVal = errno ;
+	read(read_fd, ft_read_str, 100) ;
+	
+	if (strcmp(real_read_str, ft_read_str) || real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
+		printf("\t strcpy: error on classic string \n") ;
+		res = false ;
+	}
+
+
+	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "wrong size !") ;
+
+	real_retVal = write(write_fd, write_str, strlen(write_str) - 5) ;
+	real_errnoVal = errno ;
+	read(read_fd, real_read_str, 100) ;
+	
+	ft_retVal = ft_write(write_fd, write_str, strlen(write_str) - 5) ;
+	ft_errnoVal = errno ;
+	read(read_fd, ft_read_str, 100) ;
+	
+	if (strcmp(real_read_str, ft_read_str) || real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
+		printf("\t strcpy: error on classic string \n") ;
+		res = false ;
+	}
+
+
+	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "wrong fd !") ;
+
+	real_retVal = write(-2, write_str, strlen(write_str)) ;
+	real_errnoVal = errno ;
+	
+	ft_retVal = ft_write(-2, write_str, strlen(write_str)) ;
+	ft_errnoVal = errno ;
+	
+	if (real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
+		printf("\t strcpy: error on classic string \n") ;
+		res = false ;
+	}
+
+
+	bzero(real_read_str, 100) ; bzero(ft_read_str, 100) ; bzero(write_str, 100) ; strcpy(write_str, "wrong fd again !") ;
+
+	real_retVal = write(read_fd, write_str, strlen(write_str)) ;
+	real_errnoVal = errno ;
+	
+	ft_retVal = ft_write(read_fd, write_str, strlen(write_str)) ;
+	ft_errnoVal = errno ;
+	
+	if (real_retVal != ft_retVal || real_errnoVal != ft_errnoVal) {
+		printf("\t strcpy: error on classic string \n") ;
+		res = false ;
+	}
+
+	return res ;
+}
+
 int main(int argc, char *argv[]) {
 	printf("/===========================\\\n");
 	printf("|   LET'S BEGIN THE TESTS   |\n");
@@ -122,5 +217,8 @@ int main(int argc, char *argv[]) {
 	printf("\n\n") ;
 
 	printf("strcmp : %s \n", test_strcmp() ? "👑" : "🖕") ;
+	printf("\n\n") ;
+
+	printf("write : %s \n", test_write() ? "👑" : "🖕") ;
 	printf("\n\n") ;
 }
