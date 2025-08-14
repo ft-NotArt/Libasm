@@ -1,6 +1,6 @@
 section .text
 
-extern __errno_location
+extern ft_set_errno
 
 global ft_read
 
@@ -14,13 +14,8 @@ ft_read:
 	ret					; read syscall sets rax to correct value on its own
 
 	.error:
-		neg rax			; invert its value (pass it back to positive)
-		
-		mov rdi, rax	; save return value of read
-		call __errno_location
+		mov rdi, rax
+		call ft_set_errno
 
-		mov [rax], rdi	; read correct errno value to errno location
-
-		mov rax, -1		; read returns -1 on error
-
+		mov rax, -1		; write returns -1 on error
 		ret

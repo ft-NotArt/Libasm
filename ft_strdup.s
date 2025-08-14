@@ -1,9 +1,10 @@
 section .text
 
-global ft_strdup
 extern malloc
 extern ft_strlen
 extern ft_strcpy
+
+global ft_strdup
 
 ft_strdup:
 	push rdi		; save string address because strlen increments it

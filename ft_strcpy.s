@@ -1,7 +1,8 @@
 section .text
 
-global ft_strcpy
 extern ft_strlen
+
+global ft_strcpy
 
 ft_strcpy:
 	push rdi		; save rdi (dest) to the stack
