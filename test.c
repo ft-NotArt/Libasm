@@ -14,6 +14,7 @@ char *ft_strcpy(char *dest, const char *src);
 int ft_strcmp(const char *s1, const char *s2);
 ssize_t ft_write(int fd, const void *buf, size_t count);
 ssize_t ft_read(int fd, void *buf, size_t count);
+char *ft_strdup(const char *s);
 
 bool test_strlen() {
 	char str[100] ;
@@ -327,6 +328,60 @@ bool test_read() {
 	return res ;
 }
 
+
+bool test_strdup() {
+	char str[100] ;
+	bool res = true ;
+
+	char *real_ptr, *ft_ptr ;
+	int real_errnoVal, ft_errnoVal ;
+
+
+	bzero(str, 100) ; strcpy(str, "") ;
+
+	real_ptr = strdup(str) ;
+	real_errnoVal = errno ;
+
+	ft_ptr = ft_strdup(str) ;
+	ft_errnoVal = errno ;
+	
+	if (strcmp(real_ptr, ft_ptr) || real_errnoVal != ft_errnoVal) {
+		printf("\t read: error on empty string \n") ;
+		res = false ;
+	}
+
+
+	bzero(str, 100) ; strcpy(str, "bonjour !") ;
+
+	real_ptr = strdup(str) ;
+	real_errnoVal = errno ;
+
+	ft_ptr = ft_strdup(str) ;
+	ft_errnoVal = errno ;
+	
+	if (strcmp(real_ptr, ft_ptr) || real_errnoVal != ft_errnoVal) {
+		printf("\t read: error on classic string \n") ;
+		res = false ;
+	}
+
+
+	bzero(str, 100) ; strcpy(str, "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttestt") ;
+
+	real_ptr = strdup(str) ;
+	real_errnoVal = errno ;
+
+	ft_ptr = ft_strdup(str) ;
+	ft_errnoVal = errno ;
+	
+	if (strcmp(real_ptr, ft_ptr) || real_errnoVal != ft_errnoVal) {
+		printf("\t read: error on big string \n") ;
+		res = false ;
+	}
+
+
+	return res ;
+}
+
 int main(int argc, char *argv[]) {
 	printf("/===========================\\\n");
 	printf("|   LET'S BEGIN THE TESTS   |\n");
@@ -339,12 +394,15 @@ int main(int argc, char *argv[]) {
 	printf("strcpy : %s \n", test_strcpy() ? "👑" : "🖕") ;
 	printf("\n\n") ;
 
-	printf("strcmp : %s \n", test_strcmp() ? "👑" : "🖕") ;
+	printf("strcmp : %s \n", test_strcmp() ? "👑" : "🖕 (if run under valgrind, this one crashes because strcmp stops returning the diff between characters and only returns +/-1)") ;
 	printf("\n\n") ;
 
 	printf("write : %s \n", test_write() ? "👑" : "🖕") ;
 	printf("\n\n") ;
 
 	printf("read : %s \n", test_read() ? "👑" : "🖕") ;
+	printf("\n\n") ;
+
+	printf("strdup : %s \n", test_strdup() ? "👑" : "🖕") ;
 	printf("\n\n") ;
 }

@@ -19,8 +19,8 @@ CFLAGS			=	-no-pie
 
 # FILES
 
-FILES			=	ft_strlen ft_strcpy ft_strcmp		\
-					ft_write ft_read					\
+FILES			=	ft_strlen ft_strcpy ft_strcmp ft_strdup	\
+					ft_write ft_read						\
 \
 
 SRC				=	$(addsuffix .s, $(FILES))
