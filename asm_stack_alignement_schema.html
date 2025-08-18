@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schéma Stack Operations</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 20px;
+            background: #1a1a1a;
+            color: #fff;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .step {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #444;
+            border-radius: 10px;
+            background: #2a2a2a;
+        }
+        .step-title {
+            color: #4CAF50;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .stack-visual {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        .stack {
+            border: 2px solid #666;
+            border-radius: 5px;
+            min-width: 200px;
+        }
+        .stack-item {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #444;
+            font-weight: bold;
+        }
+        .stack-item:last-child {
+            border-bottom: none;
+        }
+        .rsp-pointer {
+            background: #ff4444;
+            color: white;
+        }
+        .saved-data {
+            background: #4444ff;
+            color: white;
+        }
+        .return-addr {
+            background: #ff8800;
+            color: white;
+        }
+        .empty-space {
+            background: #333;
+            color: #999;
+            font-style: italic;
+        }
+        .alignment {
+            background: #9900ff;
+            color: white;
+        }
+        .info {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px;
+            background: #333;
+            border-radius: 5px;
+        }
+        .address {
+            color: #888;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        .instruction {
+            color: #FFD700;
+            font-weight: bold;
+        }
+        .warning {
+            background: #ff4444;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔽 Schéma détaillé des opérations de pile (Stack Operations)</h1>
+        
+        <div class="step">
+            <div class="step-title">📍 ÉTAPE 0: État initial (avant l'appel de fonction)</div>
+            <div class="stack-visual">
+                <div class="stack">
+                    <div class="stack-item empty-space"><span class="address">0x7fff1000</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff8</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff0</span> (espace libre)</div>
+                    <div class="stack-item rsp-pointer"><span class="address">0x7fff0fe8</span> ← RSP (aligné 16-byte)</div>
+                </div>
+                <div class="info">
+                    <p><strong>État:</strong> Stack alignée sur 16 bytes</p>
+                    <p><strong>RSP:</strong> 0x7fff0fe8 (divisible par 16)</p>
+                    <p><strong>Prêt pour:</strong> call instruction</p>
+                    <div class="success">✅ Alignment correcte avant call</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-title">📍 ÉTAPE 1: Après <span class="instruction">call ft_list_push_front</span></div>
+            <div class="stack-visual">
+                <div class="stack">
+                    <div class="stack-item empty-space"><span class="address">0x7fff1000</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff8</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff0</span> (espace libre)</div>
+                    <div class="stack-item return-addr"><span class="address">0x7fff0fe8</span> RETURN ADDRESS</div>
+                    <div class="stack-item rsp-pointer"><span class="address">0x7fff0fe0</span> ← RSP (16n+8)</div>
+                </div>
+                <div class="info">
+                    <p><strong>Action:</strong> call pousse l'adresse de retour (8 bytes)</p>
+                    <p><strong>RSP:</strong> 0x7fff0fe0 = 16n+8</p>
+                    <p><strong>Note:</strong> Plus aligné sur 16, mais c'est normal !</p>
+                    <div class="warning">⚠️ RSP = 16n+8 (attendu par l'ABI)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-title">📍 ÉTAPE 2: <span class="instruction">push rdi</span></div>
+            <div class="stack-visual">
+                <div class="stack">
+                    <div class="stack-item empty-space"><span class="address">0x7fff1000</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff8</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff0</span> (espace libre)</div>
+                    <div class="stack-item return-addr"><span class="address">0x7fff0fe8</span> RETURN ADDRESS</div>
+                    <div class="stack-item saved-data"><span class="address">0x7fff0fe0</span> RDI (saved)</div>
+                    <div class="stack-item rsp-pointer"><span class="address">0x7fff0fd8</span> ← RSP (16n)</div>
+                </div>
+                <div class="info">
+                    <p><strong>Action:</strong> push rdi (sauvegarde 8 bytes)</p>
+                    <p><strong>RSP:</strong> 0x7fff0fd8 = 16n</p>
+                    <p><strong>Effet:</strong> RSP -= 8</p>
+                    <div class="success">✅ Maintenant aligné sur 16 bytes !</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-title">📍 ÉTAPE 3: <span class="instruction">push rsi</span></div>
+            <div class="stack-visual">
+                <div class="stack">
+                    <div class="stack-item empty-space"><span class="address">0x7fff1000</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff8</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff0</span> (espace libre)</div>
+                    <div class="stack-item return-addr"><span class="address">0x7fff0fe8</span> RETURN ADDRESS</div>
+                    <div class="stack-item saved-data"><span class="address">0x7fff0fe0</span> RDI (saved)</div>
+                    <div class="stack-item saved-data"><span class="address">0x7fff0fd8</span> RSI (saved)</div>
+                    <div class="stack-item rsp-pointer"><span class="address">0x7fff0fd0</span> ← RSP (16n+8)</div>
+                </div>
+                <div class="info">
+                    <p><strong>Action:</strong> push rsi (sauvegarde 8 bytes)</p>
+                    <p><strong>RSP:</strong> 0x7fff0fd0 = 16n+8</p>
+                    <p><strong>Effet:</strong> RSP -= 8</p>
+                    <div class="warning">⚠️ Plus aligné ! call malloc va crasher</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-title">📍 ÉTAPE 4: <span class="instruction">sub rsp, 8</span> (FIX ALIGNMENT)</div>
+            <div class="stack-visual">
+                <div class="stack">
+                    <div class="stack-item empty-space"><span class="address">0x7fff1000</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff8</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff0</span> (espace libre)</div>
+                    <div class="stack-item return-addr"><span class="address">0x7fff0fe8</span> RETURN ADDRESS</div>
+                    <div class="stack-item saved-data"><span class="address">0x7fff0fe0</span> RDI (saved)</div>
+                    <div class="stack-item saved-data"><span class="address">0x7fff0fd8</span> RSI (saved)</div>
+                    <div class="stack-item alignment"><span class="address">0x7fff0fd0</span> (padding)</div>
+                    <div class="stack-item rsp-pointer"><span class="address">0x7fff0fc8</span> ← RSP (16n)</div>
+                </div>
+                <div class="info">
+                    <p><strong>Action:</strong> sub rsp, 8 (crée de l'espace)</p>
+                    <p><strong>RSP:</strong> 0x7fff0fc8 = 16n</p>
+                    <p><strong>Effet:</strong> Force l'alignement 16-byte</p>
+                    <div class="success">✅ Prêt pour call malloc !</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-title">📍 ÉTAPE 5: <span class="instruction">call malloc</span></div>
+            <div class="stack-visual">
+                <div class="stack">
+                    <div class="stack-item empty-space"><span class="address">0x7fff1000</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff8</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff0</span> (espace libre)</div>
+                    <div class="stack-item return-addr"><span class="address">0x7fff0fe8</span> RETURN ADDRESS</div>
+                    <div class="stack-item saved-data"><span class="address">0x7fff0fe0</span> RDI (saved)</div>
+                    <div class="stack-item saved-data"><span class="address">0x7fff0fd8</span> RSI (saved)</div>
+                    <div class="stack-item alignment"><span class="address">0x7fff0fd0</span> (padding)</div>
+                    <div class="stack-item return-addr"><span class="address">0x7fff0fc8</span> MALLOC RET ADDR</div>
+                    <div class="stack-item rsp-pointer"><span class="address">0x7fff0fc0</span> ← RSP (16n+8)</div>
+                </div>
+                <div class="info">
+                    <p><strong>Action:</strong> call malloc pousse ret addr (8 bytes)</p>
+                    <p><strong>RSP:</strong> 0x7fff0fc0 = 16n+8</p>
+                    <p><strong>Pour malloc:</strong> RSP correctement aligné !</p>
+                    <div class="success">✅ malloc peut utiliser SIMD en sécurité</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-title">📍 ÉTAPE 6: malloc termine, <span class="instruction">add rsp, 8</span></div>
+            <div class="stack-visual">
+                <div class="stack">
+                    <div class="stack-item empty-space"><span class="address">0x7fff1000</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff8</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff0</span> (espace libre)</div>
+                    <div class="stack-item return-addr"><span class="address">0x7fff0fe8</span> RETURN ADDRESS</div>
+                    <div class="stack-item saved-data"><span class="address">0x7fff0fe0</span> RDI (saved)</div>
+                    <div class="stack-item saved-data"><span class="address">0x7fff0fd8</span> RSI (saved)</div>
+                    <div class="stack-item rsp-pointer"><span class="address">0x7fff0fd0</span> ← RSP (16n+8)</div>
+                </div>
+                <div class="info">
+                    <p><strong>Action:</strong> add rsp, 8 (enlève le padding)</p>
+                    <p><strong>RSP:</strong> 0x7fff0fd0 = 16n+8</p>
+                    <p><strong>Résultat malloc:</strong> Pointeur dans RAX</p>
+                    <div class="success">✅ Stack revenue à l'état pré-malloc</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-title">📍 ÉTAPE 7: <span class="instruction">pop rsi</span></div>
+            <div class="stack-visual">
+                <div class="stack">
+                    <div class="stack-item empty-space"><span class="address">0x7fff1000</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff8</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff0</span> (espace libre)</div>
+                    <div class="stack-item return-addr"><span class="address">0x7fff0fe8</span> RETURN ADDRESS</div>
+                    <div class="stack-item saved-data"><span class="address">0x7fff0fe0</span> RDI (saved)</div>
+                    <div class="stack-item rsp-pointer"><span class="address">0x7fff0fd8</span> ← RSP (16n)</div>
+                </div>
+                <div class="info">
+                    <p><strong>Action:</strong> pop rsi (restore RSI, RSP += 8)</p>
+                    <p><strong>RSP:</strong> 0x7fff0fd8 = 16n</p>
+                    <p><strong>RSI:</strong> Valeur originale restaurée</p>
+                    <div class="success">✅ RSI récupéré !</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-title">📍 ÉTAPE 8: <span class="instruction">pop rdi</span></div>
+            <div class="stack-visual">
+                <div class="stack">
+                    <div class="stack-item empty-space"><span class="address">0x7fff1000</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff8</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff0</span> (espace libre)</div>
+                    <div class="stack-item return-addr"><span class="address">0x7fff0fe8</span> RETURN ADDRESS</div>
+                    <div class="stack-item rsp-pointer"><span class="address">0x7fff0fe0</span> ← RSP (16n+8)</div>
+                </div>
+                <div class="info">
+                    <p><strong>Action:</strong> pop rdi (restore RDI, RSP += 8)</p>
+                    <p><strong>RSP:</strong> 0x7fff0fe0 = 16n+8</p>
+                    <p><strong>RDI:</strong> Valeur originale restaurée</p>
+                    <div class="success">✅ RDI récupéré !</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-title">📍 ÉTAPE 9: <span class="instruction">ret</span> (retour au caller)</div>
+            <div class="stack-visual">
+                <div class="stack">
+                    <div class="stack-item empty-space"><span class="address">0x7fff1000</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff8</span> (espace libre)</div>
+                    <div class="stack-item empty-space"><span class="address">0x7fff0ff0</span> (espace libre)</div>
+                    <div class="stack-item rsp-pointer"><span class="address">0x7fff0fe8</span> ← RSP (16n)</div>
+                </div>
+                <div class="info">
+                    <p><strong>Action:</strong> ret (pop return address, RSP += 8)</p>
+                    <p><strong>RSP:</strong> 0x7fff0fe8 = 16n (aligné !)</p>
+                    <p><strong>Execution:</strong> Retour au caller</p>
+                    <div class="success">✅ Stack parfaitement restaurée !</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-title">📋 RÉSUMÉ DES OPÉRATIONS</div>
+            <div class="info">
+                <h3>🔍 Analyse des alignements :</h3>
+                <p><strong>Avant call:</strong> RSP = 16n (aligné)</p>
+                <p><strong>Après call:</strong> RSP = 16n+8 (normal, ABI compliant)</p>
+                <p><strong>Après push rdi:</strong> RSP = 16n (aligné)</p>
+                <p><strong>Après push rsi:</strong> RSP = 16n+8 (désaligné !)</p>
+                <p><strong>Après sub rsp, 8:</strong> RSP = 16n (aligné pour malloc)</p>
+                
+                <h3>🎯 Points clés :</h3>
+                <p>• <strong>push/pop</strong> : Modifient RSP de ±8 bytes</p>
+                <p>• <strong>sub/add rsp, N</strong> : Modifient RSP de ±N bytes</p>
+                <p>• <strong>call/ret</strong> : Modifient RSP de ±8 bytes</p>
+                <p>• <strong>Alignment requis</strong> : RSP = 16n avant chaque call</p>
+                
+                <div class="warning">
+                    ⚠️ <strong>Sans le sub rsp, 8 :</strong> malloc recevrait RSP = 16n+8, ce qui viole l'ABI et peut causer des crashes SIMD !
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
