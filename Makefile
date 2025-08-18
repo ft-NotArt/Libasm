@@ -21,6 +21,7 @@ CFLAGS			=	-no-pie
 
 FILES			=	ft_strlen ft_strcpy ft_strcmp ft_strdup	\
 					ft_write ft_read						\
+					ft_atoi_base							\
 					ft_utils								\
 \
 

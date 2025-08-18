@@ -1,3 +1,5 @@
 *.pdf
 *.o
 test.txt
+test
+libasm.a

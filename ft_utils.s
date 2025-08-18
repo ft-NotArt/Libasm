@@ -11,3 +11,20 @@ ft_set_errno:
 	mov [rax], rdi	; write correct errno value to errno location
 
 	ret
+
+
+global ft_isspace
+
+ft_isspace:		; bool ft_isspace(char c) ;
+	cmp dil, ' '
+	je .is
+	cmp dil, 13
+	jg .is_not
+	cmp dil, 9
+	jl .is_not
+	.is:
+		mov rax, 1
+		ret
+	.is_not:
+		xor rax, rax
+		ret

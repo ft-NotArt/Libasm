@@ -15,6 +15,7 @@ int ft_strcmp(const char *s1, const char *s2);
 ssize_t ft_write(int fd, const void *buf, size_t count);
 ssize_t ft_read(int fd, void *buf, size_t count);
 char *ft_strdup(const char *s);
+int ft_atoi_base(char *str, char *base);
 
 bool test_strlen() {
 	char str[100] ;
@@ -346,7 +347,7 @@ bool test_strdup() {
 	ft_errnoVal = errno ;
 	
 	if (strcmp(real_ptr, ft_ptr) || real_errnoVal != ft_errnoVal) {
-		printf("\t read: error on empty string \n") ;
+		printf("\t strdup: error on empty string \n") ;
 		res = false ;
 	}
 
@@ -360,7 +361,7 @@ bool test_strdup() {
 	ft_errnoVal = errno ;
 	
 	if (strcmp(real_ptr, ft_ptr) || real_errnoVal != ft_errnoVal) {
-		printf("\t read: error on classic string \n") ;
+		printf("\t strdup: error on classic string \n") ;
 		res = false ;
 	}
 
@@ -374,7 +375,7 @@ bool test_strdup() {
 	ft_errnoVal = errno ;
 	
 	if (strcmp(real_ptr, ft_ptr) || real_errnoVal != ft_errnoVal) {
-		printf("\t read: error on big string \n") ;
+		printf("\t strdup: error on big string \n") ;
 		res = false ;
 	}
 
@@ -382,7 +383,185 @@ bool test_strdup() {
 	return res ;
 }
 
+
+bool test_atoi_base() {
+	char str[100] ;
+	char base[100] ;
+	bool res = true ;
+
+
+	bzero(str, 100) ; strcpy(str, "") ;
+	bzero(base, 100) ; strcpy(base, "0123456789") ;
+	if (ft_atoi_base(str, base) != 0) {
+		printf("\t atoi_base: error on empty string\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "123") ;
+	bzero(base, 100) ; strcpy(base, "") ;
+	if (ft_atoi_base(str, base) != 0) {
+		printf("\t atoi_base: error on empty base\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "123") ;
+	bzero(base, 100) ; strcpy(base, "011233") ;
+	if (ft_atoi_base(str, base) != 0) {
+		printf("\t atoi_base: error on base w/ dupes\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "123") ;
+	bzero(base, 100) ; strcpy(base, "123+") ;
+	if (ft_atoi_base(str, base) != 0) {
+		printf("\t atoi_base: error on base w/ invalid chars ('+' / '-' / ' ')\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "123") ;
+	bzero(base, 100) ; strcpy(base, "1-23") ;
+	if (ft_atoi_base(str, base) != 0) {
+		printf("\t atoi_base: error on base w/ invalid chars ('+' / '-' / ' ')\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "123") ;
+	bzero(base, 100) ; strcpy(base, "12 3") ;
+	if (ft_atoi_base(str, base) != 0) {
+		printf("\t atoi_base: error on base w/ invalid chars ('+' / '-' / ' ')\n") ;
+		res = false ;
+	}
+
+
+	bzero(str, 100) ; strcpy(str, "446846486") ;
+	bzero(base, 100) ; strcpy(base, "0123456789") ;
+	if (ft_atoi_base(str, base) != 446846486) {
+		printf("\t atoi_base: error on base 10\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "-2147483648") ;
+	if (ft_atoi_base(str, base) != -2147483648) {
+		printf("\t atoi_base: error on base 10, int min\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "2147483647") ;
+	if (ft_atoi_base(str, base) != 2147483647) {
+		printf("\t atoi_base: error on base 10, int max\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "    \t \v \n \f      446846486") ;
+	if (ft_atoi_base(str, base) != 446846486) {
+		printf("\t atoi_base: error on base 10, w/ spaces\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "    \t \v \n \f      +--+-+--+-+446846486") ;
+	if (ft_atoi_base(str, base) != 446846486) {
+		printf("\t atoi_base: error on base 10, w/ spaces & signs\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "    \t \v \n \f      +--+-+--+-+446846486ghgtuf") ;
+	if (ft_atoi_base(str, base) != 446846486) {
+		printf("\t atoi_base: error on base 10, /w spaces & signs & non-base characters after\n") ;
+		res = false ;
+	}
+
+
+	bzero(str, 100) ; strcpy(str, "AAbBAbABb") ;
+	bzero(base, 100) ; strcpy(base, "OIZEASbjBq") ;
+	if (ft_atoi_base(str, base) != 446846486) {
+		printf("\t atoi_base: error on base 10 (characters as numbers)\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "    \t \v \n \f      AAbBAbABb") ;
+	if (ft_atoi_base(str, base) != 446846486) {
+		printf("\t atoi_base: error on base 10 (characters as numbers), w/ spaces\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "    \t \v \n \f      +--+-+--+-+AAbBAbABb") ;
+	if (ft_atoi_base(str, base) != 446846486) {
+		printf("\t atoi_base: error on base 10 (characters as numbers), w/ spaces & signs\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "    \t \v \n \f      +--+-+--+-+AAbBAbABbghgtuf") ;
+	if (ft_atoi_base(str, base) != 446846486) {
+		printf("\t atoi_base: error on base 10 (characters as numbers), /w spaces & signs & non-base characters after\n") ;
+		res = false ;
+	}
+
+
+	bzero(str, 100) ; strcpy(str, "OIIOIIO") ;
+	bzero(base, 100) ; strcpy(base, "OI") ;
+	if (ft_atoi_base(str, base) != 0b0110110) {
+		printf("\t atoi_base: error on base 2 (characters as numbers)\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "    \t \v \n \f      OIIOIIO") ;
+	if (ft_atoi_base(str, base) != 0b0110110) {
+		printf("\t atoi_base: error on base 2 (characters as numbers), w/ spaces\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "    \t \v \n \f      +--+-+--+-+OIIOIIO") ;
+	if (ft_atoi_base(str, base) != 0b0110110) {
+		printf("\t atoi_base: error on base 2 (characters as numbers), w/ spaces & signs\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "    \t \v \n \f      +--+-+--+-+OIIOIIOghgtuf") ;
+	if (ft_atoi_base(str, base) != 0b0110110) {
+		printf("\t atoi_base: error on base 2 (characters as numbers), /w spaces & signs & non-base characters after\n") ;
+		res = false ;
+	}
+
+
+	bzero(str, 100) ; strcpy(str, "ofe") ;
+	bzero(base, 100) ; strcpy(base, "poneyvif") ;
+	if (ft_atoi_base(str, base) != 0173) {
+		printf("\t atoi_base: error on base 8 (characters as numbers)\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "    \t \v \n \f      ofe") ;
+	if (ft_atoi_base(str, base) != 0173) {
+		printf("\t atoi_base: error on base 8 (characters as numbers), w/ spaces\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "    \t \v \n \f      +--+-+--+-+ofe") ;
+	if (ft_atoi_base(str, base) != 0173) {
+		printf("\t atoi_base: error on base 8 (characters as numbers), w/ spaces & signs\n") ;
+		res = false ;
+	}
+
+	bzero(str, 100) ; strcpy(str, "    \t \v \n \f      +--+-+--+-+ofeghgtuf") ;
+	if (ft_atoi_base(str, base) != 0173) {
+		printf("\t atoi_base: error on base 8 (characters as numbers), /w spaces & signs & non-base characters after\n") ;
+		res = false ;
+	}
+
+
+	return res ;
+}
+
+
 int main(int argc, char *argv[]) {
+
+	if (argc > 1 && (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))) {
+		printf("Options:\n") ;
+		printf("\t -h, --help \t\t shows options\n") ;
+		printf("\t -n, --no-bonus \t doesn't test bonus functions\n") ;
+		return 0 ;
+	}
+	
 	printf("/===========================\\\n");
 	printf("|   LET'S BEGIN THE TESTS   |\n");
 	printf("\\===========================/\n");
@@ -405,4 +584,12 @@ int main(int argc, char *argv[]) {
 
 	printf("strdup : %s \n", test_strdup() ? "👑" : "🖕") ;
 	printf("\n\n") ;
+
+
+	if (argc > 1 && (!strcmp(argv[1], "-n") || !strcmp(argv[1], "--no-bonus")))
+		return 0 ;
+
+	printf("atoi_base : %s \n", test_atoi_base() ? "👑" : "🖕") ;
+	printf("\n\n") ;
+	
 }
