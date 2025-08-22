@@ -4,10 +4,18 @@
 #include <string.h>
 #include <strings.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
+
+
+typedef struct s_list {
+	void *data ;
+	struct s_list *next ;
+} t_list ;
+
 
 size_t ft_strlen(char *str) ;
 char *ft_strcpy(char *dest, const char *src);
@@ -16,6 +24,11 @@ ssize_t ft_write(int fd, const void *buf, size_t count);
 ssize_t ft_read(int fd, void *buf, size_t count);
 char *ft_strdup(const char *s);
 int ft_atoi_base(char *str, char *base);
+void ft_list_push_front(t_list **begin_list, void *data);
+int ft_list_size(t_list *begin_list);
+void ft_list_sort(t_list **begin_list, int (*cmp)(void *data, void *other_data));
+void ft_list_remove_if(t_list **begin_list, void *data_ref, int (*cmp)(), void (*free_fct)(void *));
+
 
 bool test_strlen() {
 	char str[100] ;
@@ -553,6 +566,19 @@ bool test_atoi_base() {
 }
 
 
+int cmp(void *data, void *other_data) {
+    int a = *(int *)data;
+    int b = *(int *)other_data;
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+}
+
+void free_fct(void *data) {
+	(void) data ;
+	return ;
+}
+
 int main(int argc, char *argv[]) {
 
 	if (argc > 1 && (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))) {
@@ -591,5 +617,207 @@ int main(int argc, char *argv[]) {
 
 	printf("atoi_base : %s \n", test_atoi_base() ? "👑" : "🖕") ;
 	printf("\n\n") ;
+
+
+
+	t_list *node1 ;
+	t_list *node2 ;
+	t_list *node3 ;
+
+	int int1 ;
+	int int2 ;
+	int int3 ;
+
+
+	node1 = malloc(sizeof(t_list)) ;
+	node2 = malloc(sizeof(t_list)) ;
+	node3 = malloc(sizeof(t_list)) ;
+	node1->next = node2 ;
+	node2->next = node3 ;
+	node3->next = NULL ;
+	int1 = 1 ;
+	int2 = 2 ;
+	int3 = 3 ;
+	node1->data = &int1 ;
+	node2->data = &int2 ;
+	node3->data = &int3 ;
+
+	printf("Before sort : \n") ;
+	for (t_list *cur = node1; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	ft_list_sort(&node1, cmp) ;
+
+	printf("After sort : \n") ;
+	for (t_list *cur = node1; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	printf("\n\n") ;
+
+
+	node1 = malloc(sizeof(t_list)) ;
+	node2 = malloc(sizeof(t_list)) ;
+	node3 = malloc(sizeof(t_list)) ;
+	node1->next = node2 ;
+	node2->next = node3 ;
+	node3->next = NULL ;
+	int1 = 4 ;
+	int2 = 2 ;
+	int3 = 3 ;
+	node1->data = &int1 ;
+	node2->data = &int2 ;
+	node3->data = &int3 ;
+
+	printf("Before sort : \n") ;
+	for (t_list *cur = node1; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	ft_list_sort(&node1, cmp) ;
+
+	printf("After sort : \n") ;
+	for (t_list *cur = node1; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	printf("\n\n") ;
+
+
+	node1 = malloc(sizeof(t_list)) ;
+	node2 = malloc(sizeof(t_list)) ;
+	node3 = malloc(sizeof(t_list)) ;
+	node1->next = node2 ;
+	node2->next = node3 ;
+	node3->next = NULL ;
+	int1 = 4 ;
+	int2 = 2 ;
+	int3 = 2 ;
+	node1->data = &int1 ;
+	node2->data = &int2 ;
+	node3->data = &int3 ;
+
+	printf("Before sort : \n") ;
+	for (t_list *cur = node1; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	ft_list_sort(&node1, cmp) ;
+
+	printf("After sort : \n") ;
+	for (t_list *cur = node1; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	printf("\n\n") ;
+
+
+	t_list **head ;
+
 	
+	node1 = malloc(sizeof(t_list)) ;
+	node2 = malloc(sizeof(t_list)) ;
+	node3 = malloc(sizeof(t_list)) ;
+	node1->next = node2 ;
+	node2->next = node3 ;
+	node3->next = NULL ;
+	int1 = 1 ;
+	int2 = 2 ;
+	int3 = 3 ;
+	node1->data = &int1 ;
+	node2->data = &int2 ;
+	node3->data = &int3 ;
+
+	head = &node1 ;
+
+	printf("Before remove if : \n") ;
+	for (t_list *cur = *head; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	ft_list_remove_if(head, &int2, cmp, free_fct) ;
+
+	printf("After remove if : \n") ;
+	for (t_list *cur = *head; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	printf("\n\n") ;
+
+	
+	node1 = malloc(sizeof(t_list)) ;
+	node2 = malloc(sizeof(t_list)) ;
+	node3 = malloc(sizeof(t_list)) ;
+	node1->next = node2 ;
+	node2->next = node3 ;
+	node3->next = NULL ;
+	int1 = 1 ;
+	int2 = 2 ;
+	int3 = 3 ;
+	node1->data = &int1 ;
+	node2->data = &int2 ;
+	node3->data = &int3 ;
+
+	head = &node1 ;
+
+	printf("Before remove if : \n") ;
+	for (t_list *cur = *head; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	ft_list_remove_if(head, &int1, cmp, free_fct) ;
+
+	printf("After remove if : \n") ;
+	for (t_list *cur = *head; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	printf("\n\n") ;
+
+	
+	node1 = malloc(sizeof(t_list)) ;
+	node2 = malloc(sizeof(t_list)) ;
+	node3 = malloc(sizeof(t_list)) ;
+	node1->next = node2 ;
+	node2->next = node3 ;
+	node3->next = NULL ;
+	int1 = 1 ;
+	int2 = 2 ;
+	int3 = 3 ;
+	node1->data = &int1 ;
+	node2->data = &int2 ;
+	node3->data = &int3 ;
+
+	head = &node1 ;
+
+	printf("Before remove if : \n") ;
+	for (t_list *cur = *head; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	ft_list_remove_if(head, &int3, cmp, free_fct) ;
+
+	printf("After remove if : \n") ;
+	for (t_list *cur = *head; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	printf("\n\n") ;
+
+	
+	node1 = malloc(sizeof(t_list)) ;
+	node2 = malloc(sizeof(t_list)) ;
+	node3 = malloc(sizeof(t_list)) ;
+	node1->next = node2 ;
+	node2->next = node3 ;
+	node3->next = NULL ;
+	int1 = 3 ;
+	int2 = 3 ;
+	int3 = 3 ;
+	node1->data = &int1 ;
+	node2->data = &int2 ;
+	node3->data = &int3 ;
+
+	head = &node1 ;
+
+	printf("Before remove if : \n") ;
+	for (t_list *cur = *head; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	ft_list_remove_if(head, &int3, cmp, free_fct) ;
+
+	printf("After remove if : \n") ;
+	for (t_list *cur = *head; cur != NULL; cur = cur->next)
+		printf("data='%d' \n", * (int *)cur->data) ;
+
+	printf("\n\n") ;
 }
