@@ -45,7 +45,7 @@ ft_list_remove_if:		; void ft_list_remove_if(t_list **begin_list, void *data_ref
 		mov r15, r13	; save current to remove it after inc_cur
 
 		cmp eax, 0
-		je .inc_cur		; skip inc_prev if no remove to do
+		je .inc_cur		; skip inc_prev if have to remove
 	.inc_prev:
 		mov r12, r13
 	.inc_cur:

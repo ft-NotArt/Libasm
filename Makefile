@@ -12,10 +12,10 @@ NAME			=	libasm.a
 
 MAKEFLAGS		+=	-s
 AS				=	nasm
-ASFLAGS			=	-f elf64
+ASFLAGS			=	-f elf64 -g
 ARFLAGS			=	rcs
 CC				=	gcc
-CFLAGS			=	-no-pie -rdynamic
+CFLAGS			=	-no-pie -rdynamic -g
 
 # FILES
 
