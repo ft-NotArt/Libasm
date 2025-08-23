@@ -1,14 +1,17 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <stdbool.h>
 
 #include <string.h>
 #include <strings.h>
-#include <unistd.h>
-#include <stdlib.h>
+
+#include <fcntl.h>
+#include <dlfcn.h>
+
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
 
 
 typedef struct s_list {
@@ -579,19 +582,50 @@ void free_fct(void *data) {
 	return ;
 }
 
+#define BEGIN_TESTS printf("/===========================\\\n|   LET'S BEGIN THE TESTS   |\n\\===========================/\n\n\n") ;
+
 int main(int argc, char *argv[]) {
 
 	if (argc > 1 && (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))) {
 		printf("Options:\n") ;
 		printf("\t -h, --help \t\t shows options\n") ;
 		printf("\t -n, --no-bonus \t doesn't test bonus functions\n") ;
+		printf("\t -i, --interactive \t ask for the name of a specific function to test\n") ;
 		return 0 ;
 	}
-	
-	printf("/===========================\\\n");
-	printf("|   LET'S BEGIN THE TESTS   |\n");
-	printf("\\===========================/\n");
-	printf("\n\n") ;
+
+	if (argc > 1 && (!strcmp(argv[1], "-i") || !strcmp(argv[1], "--interactive"))) {
+		char input[250] ; bzero(input, 250) ;
+		if (read(STDIN_FILENO, input, sizeof(input) - 1) == -1) {
+			perror("read error") ;
+			return 1 ;
+		}
+
+		char *newline = strchr(input, '\n') ;
+		if (newline) *newline = '\0' ;
+
+		char func_name[256] ;
+		snprintf(func_name, sizeof(func_name), "test_%s", input) ;
+		
+		bool (*test_func)() = dlsym(NULL, func_name) ;
+
+		printf("\n") ;
+
+		if (dlerror() != NULL) {
+			dprintf(STDERR_FILENO, "No function called %s to be tested\nPlease enter a function from the libasm when in interactive mode\n", input) ;
+			return 1 ;
+		} else {
+			BEGIN_TESTS
+
+			printf("%s : %s \n", input, test_func() ? "👑" : "🖕") ;
+			printf("\n\n") ;
+
+			return 0 ;
+		}
+	}
+
+
+	BEGIN_TESTS
 
 	printf("strlen : %s \n", test_strlen() ? "👑" : "🖕") ;
 	printf("\n\n") ;

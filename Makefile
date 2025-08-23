@@ -1,6 +1,6 @@
 # COLORS
 
-BROWN				=	\x1b[0m\x1b[38;2;137;81;41m
+BROWN			=	\x1b[0m\x1b[38;2;137;81;41m
 LIGHT_BROWN		=	\x1b[0m\x1b[38;2;172;133;105m
 DARK_BROWN		=	\x1b[1m\x1b[38;2;96;57;29m
 
@@ -15,7 +15,7 @@ AS				=	nasm
 ASFLAGS			=	-f elf64
 ARFLAGS			=	rcs
 CC				=	gcc
-CFLAGS			=	-no-pie
+CFLAGS			=	-no-pie -rdynamic
 
 # FILES
 
@@ -61,7 +61,7 @@ fclean:			clean
 re:				fclean all
 
 test:			$(OBJ_TEST) $(NAME)
-				$(CC) $(CFLAGS) $^ -o $@
+				$(CC) $(CFLAGS) $^ -ldl -o $@
 				echo -e '$(LIGHT_BROWN) \tCompiled$(DARK_BROWN) $(FILES_TEST)$(LIGHT_BROWN) using$(DARK_BROWN) $(NAME)'
 
 .PHONY:			all bonus clean fclean re test
