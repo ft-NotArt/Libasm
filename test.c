@@ -412,6 +412,7 @@ bool test_strdup() {
 		printf("\t strdup: error on empty string \n") ;
 		res = false ;
 	}
+	free(real_ptr) ; free(ft_ptr) ;
 
 
 	bzero(str, 100) ; strcpy(str, "bonjour !") ;
@@ -426,6 +427,7 @@ bool test_strdup() {
 		printf("\t strdup: error on classic string \n") ;
 		res = false ;
 	}
+	free(real_ptr) ; free(ft_ptr) ;
 
 
 	bzero(str, 100) ; strcpy(str, "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttestt") ;
@@ -440,6 +442,7 @@ bool test_strdup() {
 		printf("\t strdup: error on big string \n") ;
 		res = false ;
 	}
+	free(real_ptr) ; free(ft_ptr) ;
 
 
 	return res ;
